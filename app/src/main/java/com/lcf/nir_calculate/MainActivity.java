@@ -26,9 +26,9 @@ public class MainActivity extends AppCompatActivity {
     String[] premission = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     public static final int REQUEST_PERMISSION = 101;
     //    String picPath1 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/band3.png";
-    String picPath1 = "file:///android_asset/" + "band3.png";
+    String picPath1 = "file:///android_asset/" + "right.jpg";
     //    String picPath2 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/band4.png";
-    String picPath2 = "file:///android_asset/" + "band4.png";
+    String picPath2 = "file:///android_asset/" + "left.jpg";
 
     boolean hasPermission = false;
     private ImageView iv1;
@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
         Bitmap bitmap2 = null;
         try {
             int greenCount = 0;
-            bitmap1 = BitmapFactory.decodeStream(getAssets().open("band3.png"));
-            bitmap2 = BitmapFactory.decodeStream(getAssets().open("band4.png"));
+            bitmap1 = BitmapFactory.decodeStream(getAssets().open("right.jpg"));
+            bitmap2 = BitmapFactory.decodeStream(getAssets().open("left.jpg"));
             int minW = Math.min(bitmap1.getWidth(), bitmap2.getWidth());
             int minH = Math.min(bitmap1.getHeight(), bitmap2.getHeight());
             int[] pixel1 = new int[minW * minH];
@@ -99,14 +99,15 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("开始算");
             for (int i = 0; i < pixel1.length; i++) {
                 final int r1 = (pixel1[i] & 0xff0000) >> 16, g1 = (pixel1[i] & 0xff00) >> 8, b1 = pixel1[i] & 0xff;
-                final float gray1 = 0.299f * r1 + 0.578f * g1 + 0.114f * b1;
+//                final float gray1 = 0.299f * r1 + 0.578f * g1 + 0.114f * b1;
+                final float gray1 = (r1 + g1 + b1) / 3;
                 final int r2 = (pixel2[i] & 0xff0000) >> 16, g2 = (pixel2[i] & 0xff00) >> 8, b2 = pixel2[i] & 0xff;
-                final float gray2 = 0.299f * r2 + 0.578f * g2 + 0.114f * b2;
+                final float gray2 = (r2 + g2 + b2) / 3;
                 if (gray1 == 0 && gray2 == 0)
                     ndvi[i] = 0;
                 else
                     ndvi[i] = (gray2 - gray1) / (gray2 + gray1);
-                if (ndvi[i] > 0.05f) {
+                if (ndvi[i] > 0.1f) {
                     System.out.println("绿色像素值:" + ndvi[i] + " 绿色像素坐标：" + i);
                     greenCount++;
                 }
@@ -133,13 +134,12 @@ public class MainActivity extends AppCompatActivity {
     private void merge2Color(int[] pixel, float[] ndvi, int color1, int color2) {
         int rT, gT, bT;
         for (int i = 0; i < pixel.length; i++) {
-            pixel[i] = ndvi[i] > 0.05f ? color2 : color1;
-//            final int r1 = (color1 & 0xff0000) >> 16, g1 = (color1 & 0xff00) >> 8, b1 = color1 & 0xff;
-//            final int r2 = (color2 & 0xff0000) >> 16, g2 = (color2 & 0xff00) >> 8, b2 = color2 & 0xff;
-//            rT = r1 + ((int) ((r2 - r1) * ((ndvi[i] + 1) / 2f)));
-//            gT = g1 + ((int) ((g2 - g1) * ((ndvi[i] + 1) / 2f)));
-//            bT = b1 + ((int) ((b2 - b1) * ((ndvi[i] + 1) / 2f)));
-//            pixel[i] = Color.rgb(rT, bT, gT);
+            final int r1 = (color1 & 0xff0000) >> 16, g1 = (color1 & 0xff00) >> 8, b1 = color1 & 0xff;
+            final int r2 = (color2 & 0xff0000) >> 16, g2 = (color2 & 0xff00) >> 8, b2 = color2 & 0xff;
+            rT = r1 + ((int) ((r2 - r1) * ((ndvi[i] + 1) / 2f)));
+            gT = g1 + ((int) ((g2 - g1) * ((ndvi[i] + 1) / 2f)));
+            bT = b1 + ((int) ((b2 - b1) * ((ndvi[i] + 1) / 2f)));
+            pixel[i] = Color.rgb(rT, bT, gT);
         }
     }
 
