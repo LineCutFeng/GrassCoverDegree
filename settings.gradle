@@ -1,1 +1,1 @@
-include ':app', ':calidualcamera',':openCVLibrary320'
+include ':app', ':calidualcamera',':openCVLibrary320', ':openCVLibrary410'
