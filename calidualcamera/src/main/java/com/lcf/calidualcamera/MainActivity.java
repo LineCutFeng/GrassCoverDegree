@@ -1,36 +1,18 @@
 package com.lcf.calidualcamera;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.core.MatOfDMatch;
-import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-import org.opencv.features2d.DMatch;
-import org.opencv.features2d.DescriptorExtractor;
-import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.FeatureDetector;
-import org.opencv.features2d.Features2d;
 import org.opencv.imgproc.Imgproc;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -128,10 +110,10 @@ public class MainActivity extends AppCompatActivity {
             Mat src = new Mat();
             Mat temp = new Mat();
             MatOfPoint2f matOfPoint = new MatOfPoint2f();
-            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("chess4.jpg")), src);
+            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("chess0_left.jpg")), src);
             Imgproc.cvtColor(src, temp, Imgproc.COLOR_RGB2GRAY);
             Calib3d.findChessboardCorners(temp, patSize, matOfPoint);
-            System.out.println("提取完成");
+            System.out.println("提取完成" + matOfPoint.toList().size());
         } catch (Exception e) {
             e.printStackTrace();
         }
