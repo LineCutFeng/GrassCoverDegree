@@ -27,24 +27,14 @@ public class HOGDescriptor {
     // internal usage only
     public static HOGDescriptor __fromPtr__(long addr) { return new HOGDescriptor(addr); }
 
-    // C++: enum DescriptorStorageFormat
-    public static final int
-            DESCR_FORMAT_COL_BY_COL = 0,
-            DESCR_FORMAT_ROW_BY_ROW = 1;
-
-
     // C++: enum <unnamed>
     public static final int
+            L2Hys = 0,
             DEFAULT_NLEVELS = 64;
 
 
-    // C++: enum HistogramNormType
-    public static final int
-            L2Hys = 0;
-
-
     //
-    // C++:   cv::HOGDescriptor::HOGDescriptor(Size _winSize, Size _blockSize, Size _blockStride, Size _cellSize, int _nbins, int _derivAperture = 1, double _winSigma = -1, HOGDescriptor_HistogramNormType _histogramNormType = HOGDescriptor::L2Hys, double _L2HysThreshold = 0.2, bool _gammaCorrection = false, int _nlevels = HOGDescriptor::DEFAULT_NLEVELS, bool _signedGradient = false)
+    // C++:   cv::HOGDescriptor::HOGDescriptor(Size _winSize, Size _blockSize, Size _blockStride, Size _cellSize, int _nbins, int _derivAperture = 1, double _winSigma = -1, int _histogramNormType = HOGDescriptor::L2Hys, double _L2HysThreshold = 0.2, bool _gammaCorrection = false, int _nlevels = HOGDescriptor::DEFAULT_NLEVELS, bool _signedGradient = false)
     //
 
     //javadoc: HOGDescriptor::HOGDescriptor(_winSize, _blockSize, _blockStride, _cellSize, _nbins, _derivAperture, _winSigma, _histogramNormType, _L2HysThreshold, _gammaCorrection, _nlevels, _signedGradient)
@@ -470,14 +460,14 @@ public class HOGDescriptor {
 
 
     //
-    // C++:  void cv::HOGDescriptor::setSVMDetector(Mat svmdetector)
+    // C++:  void cv::HOGDescriptor::setSVMDetector(Mat _svmdetector)
     //
 
-    //javadoc: HOGDescriptor::setSVMDetector(svmdetector)
-    public  void setSVMDetector(Mat svmdetector)
+    //javadoc: HOGDescriptor::setSVMDetector(_svmdetector)
+    public  void setSVMDetector(Mat _svmdetector)
     {
         
-        setSVMDetector_0(nativeObj, svmdetector.nativeObj);
+        setSVMDetector_0(nativeObj, _svmdetector.nativeObj);
         
         return;
     }
@@ -582,7 +572,7 @@ public class HOGDescriptor {
 
 
     //
-    // C++: HOGDescriptor_HistogramNormType HOGDescriptor::histogramNormType
+    // C++: int HOGDescriptor::histogramNormType
     //
 
     //javadoc: HOGDescriptor::get_histogramNormType()
@@ -672,7 +662,7 @@ public class HOGDescriptor {
 
 
 
-    // C++:   cv::HOGDescriptor::HOGDescriptor(Size _winSize, Size _blockSize, Size _blockStride, Size _cellSize, int _nbins, int _derivAperture = 1, double _winSigma = -1, HOGDescriptor_HistogramNormType _histogramNormType = HOGDescriptor::L2Hys, double _L2HysThreshold = 0.2, bool _gammaCorrection = false, int _nlevels = HOGDescriptor::DEFAULT_NLEVELS, bool _signedGradient = false)
+    // C++:   cv::HOGDescriptor::HOGDescriptor(Size _winSize, Size _blockSize, Size _blockStride, Size _cellSize, int _nbins, int _derivAperture = 1, double _winSigma = -1, int _histogramNormType = HOGDescriptor::L2Hys, double _L2HysThreshold = 0.2, bool _gammaCorrection = false, int _nlevels = HOGDescriptor::DEFAULT_NLEVELS, bool _signedGradient = false)
     private static native long HOGDescriptor_0(double _winSize_width, double _winSize_height, double _blockSize_width, double _blockSize_height, double _blockStride_width, double _blockStride_height, double _cellSize_width, double _cellSize_height, int _nbins, int _derivAperture, double _winSigma, int _histogramNormType, double _L2HysThreshold, boolean _gammaCorrection, int _nlevels, boolean _signedGradient);
     private static native long HOGDescriptor_1(double _winSize_width, double _winSize_height, double _blockSize_width, double _blockSize_height, double _blockStride_width, double _blockStride_height, double _cellSize_width, double _cellSize_height, int _nbins, int _derivAperture, double _winSigma, int _histogramNormType, double _L2HysThreshold, boolean _gammaCorrection, int _nlevels);
     private static native long HOGDescriptor_2(double _winSize_width, double _winSize_height, double _blockSize_width, double _blockSize_height, double _blockStride_width, double _blockStride_height, double _cellSize_width, double _cellSize_height, int _nbins, int _derivAperture, double _winSigma, int _histogramNormType, double _L2HysThreshold, boolean _gammaCorrection);
@@ -738,8 +728,8 @@ public class HOGDescriptor {
     private static native void save_0(long nativeObj, String filename, String objname);
     private static native void save_1(long nativeObj, String filename);
 
-    // C++:  void cv::HOGDescriptor::setSVMDetector(Mat svmdetector)
-    private static native void setSVMDetector_0(long nativeObj, long svmdetector_nativeObj);
+    // C++:  void cv::HOGDescriptor::setSVMDetector(Mat _svmdetector)
+    private static native void setSVMDetector_0(long nativeObj, long _svmdetector_nativeObj);
 
     // C++: Size HOGDescriptor::winSize
     private static native double[] get_winSize_0(long nativeObj);
@@ -762,7 +752,7 @@ public class HOGDescriptor {
     // C++: double HOGDescriptor::winSigma
     private static native double get_winSigma_0(long nativeObj);
 
-    // C++: HOGDescriptor_HistogramNormType HOGDescriptor::histogramNormType
+    // C++: int HOGDescriptor::histogramNormType
     private static native int get_histogramNormType_0(long nativeObj);
 
     // C++: double HOGDescriptor::L2HysThreshold

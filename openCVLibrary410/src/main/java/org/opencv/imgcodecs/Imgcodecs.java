@@ -16,6 +16,21 @@ import org.opencv.utils.Converters;
 
 public class Imgcodecs {
 
+    // C++: enum ImwriteEXRTypeFlags
+    public static final int
+            IMWRITE_EXR_TYPE_HALF = 1,
+            IMWRITE_EXR_TYPE_FLOAT = 2;
+
+
+    // C++: enum ImwritePNGFlags
+    public static final int
+            IMWRITE_PNG_STRATEGY_DEFAULT = 0,
+            IMWRITE_PNG_STRATEGY_FILTERED = 1,
+            IMWRITE_PNG_STRATEGY_HUFFMAN_ONLY = 2,
+            IMWRITE_PNG_STRATEGY_RLE = 3,
+            IMWRITE_PNG_STRATEGY_FIXED = 4;
+
+
     // C++: enum ImwriteFlags
     public static final int
             IMWRITE_JPEG_QUALITY = 1,
@@ -34,8 +49,7 @@ public class Imgcodecs {
             IMWRITE_TIFF_RESUNIT = 256,
             IMWRITE_TIFF_XDPI = 257,
             IMWRITE_TIFF_YDPI = 258,
-            IMWRITE_TIFF_COMPRESSION = 259,
-            IMWRITE_JPEG2000_COMPRESSION_X1000 = 272;
+            IMWRITE_TIFF_COMPRESSION = 259;
 
 
     // C++: enum ImreadModes
@@ -55,6 +69,42 @@ public class Imgcodecs {
             IMREAD_IGNORE_ORIENTATION = 128;
 
 
+    // C++: enum <unnamed>
+    public static final int
+            CV_LOAD_IMAGE_UNCHANGED = -1,
+            CV_LOAD_IMAGE_GRAYSCALE = 0,
+            CV_LOAD_IMAGE_COLOR = 1,
+            CV_LOAD_IMAGE_ANYDEPTH = 2,
+            CV_LOAD_IMAGE_ANYCOLOR = 4,
+            CV_LOAD_IMAGE_IGNORE_ORIENTATION = 128,
+            CV_IMWRITE_JPEG_QUALITY = 1,
+            CV_IMWRITE_JPEG_PROGRESSIVE = 2,
+            CV_IMWRITE_JPEG_OPTIMIZE = 3,
+            CV_IMWRITE_JPEG_RST_INTERVAL = 4,
+            CV_IMWRITE_JPEG_LUMA_QUALITY = 5,
+            CV_IMWRITE_JPEG_CHROMA_QUALITY = 6,
+            CV_IMWRITE_PNG_COMPRESSION = 16,
+            CV_IMWRITE_PNG_STRATEGY = 17,
+            CV_IMWRITE_PNG_BILEVEL = 18,
+            CV_IMWRITE_PNG_STRATEGY_DEFAULT = 0,
+            CV_IMWRITE_PNG_STRATEGY_FILTERED = 1,
+            CV_IMWRITE_PNG_STRATEGY_HUFFMAN_ONLY = 2,
+            CV_IMWRITE_PNG_STRATEGY_RLE = 3,
+            CV_IMWRITE_PNG_STRATEGY_FIXED = 4,
+            CV_IMWRITE_PXM_BINARY = 32,
+            CV_IMWRITE_EXR_TYPE = 48,
+            CV_IMWRITE_WEBP_QUALITY = 64,
+            CV_IMWRITE_PAM_TUPLETYPE = 128,
+            CV_IMWRITE_PAM_FORMAT_NULL = 0,
+            CV_IMWRITE_PAM_FORMAT_BLACKANDWHITE = 1,
+            CV_IMWRITE_PAM_FORMAT_GRAYSCALE = 2,
+            CV_IMWRITE_PAM_FORMAT_GRAYSCALE_ALPHA = 3,
+            CV_IMWRITE_PAM_FORMAT_RGB = 4,
+            CV_IMWRITE_PAM_FORMAT_RGB_ALPHA = 5,
+            CV_CVTIMG_FLIP = 1,
+            CV_CVTIMG_SWAP_RB = 2;
+
+
     // C++: enum ImwritePAMFlags
     public static final int
             IMWRITE_PAM_FORMAT_NULL = 0,
@@ -63,21 +113,6 @@ public class Imgcodecs {
             IMWRITE_PAM_FORMAT_GRAYSCALE_ALPHA = 3,
             IMWRITE_PAM_FORMAT_RGB = 4,
             IMWRITE_PAM_FORMAT_RGB_ALPHA = 5;
-
-
-    // C++: enum ImwriteEXRTypeFlags
-    public static final int
-            IMWRITE_EXR_TYPE_HALF = 1,
-            IMWRITE_EXR_TYPE_FLOAT = 2;
-
-
-    // C++: enum ImwritePNGFlags
-    public static final int
-            IMWRITE_PNG_STRATEGY_DEFAULT = 0,
-            IMWRITE_PNG_STRATEGY_FILTERED = 1,
-            IMWRITE_PNG_STRATEGY_HUFFMAN_ONLY = 2,
-            IMWRITE_PNG_STRATEGY_RLE = 3,
-            IMWRITE_PNG_STRATEGY_FIXED = 4;
 
 
     //
@@ -112,34 +147,6 @@ public class Imgcodecs {
     {
         
         Mat retVal = new Mat(imread_1(filename));
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  bool cv::haveImageReader(String filename)
-    //
-
-    //javadoc: haveImageReader(filename)
-    public static boolean haveImageReader(String filename)
-    {
-        
-        boolean retVal = haveImageReader_0(filename);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  bool cv::haveImageWriter(String filename)
-    //
-
-    //javadoc: haveImageWriter(filename)
-    public static boolean haveImageWriter(String filename)
-    {
-        
-        boolean retVal = haveImageWriter_0(filename);
         
         return retVal;
     }
@@ -225,12 +232,6 @@ public class Imgcodecs {
     // C++:  Mat cv::imread(String filename, int flags = IMREAD_COLOR)
     private static native long imread_0(String filename, int flags);
     private static native long imread_1(String filename);
-
-    // C++:  bool cv::haveImageReader(String filename)
-    private static native boolean haveImageReader_0(String filename);
-
-    // C++:  bool cv::haveImageWriter(String filename)
-    private static native boolean haveImageWriter_0(String filename);
 
     // C++:  bool cv::imencode(String ext, Mat img, vector_uchar& buf, vector_int params = std::vector<int>())
     private static native boolean imencode_0(String ext, long img_nativeObj, long buf_mat_nativeObj, long params_mat_nativeObj);

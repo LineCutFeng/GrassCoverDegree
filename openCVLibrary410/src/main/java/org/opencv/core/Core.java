@@ -18,11 +18,11 @@ import org.opencv.utils.Converters;
 
 public class Core {
     // these constants are wrapped inside functions to prevent inlining
-    private static String getVersion() { return "4.1.0"; }
-    private static String getNativeLibraryName() { return "opencv_java410"; }
-    private static int getVersionMajorJ() { return 4; }
-    private static int getVersionMinorJ() { return 1; }
-    private static int getVersionRevisionJ() { return 0; }
+    private static String getVersion() { return "3.4.6"; }
+    private static String getNativeLibraryName() { return "opencv_java346"; }
+    private static int getVersionMajorJ() { return 3; }
+    private static int getVersionMinorJ() { return 4; }
+    private static int getVersionRevisionJ() { return 6; }
     private static String getVersionStatusJ() { return ""; }
 
     public static final String VERSION = getVersion();
@@ -53,6 +53,26 @@ public class Core {
             DECOMP_NORMAL = 16;
 
 
+    // C++: enum HersheyFonts
+    public static final int
+            FONT_HERSHEY_SIMPLEX = 0,
+            FONT_HERSHEY_PLAIN = 1,
+            FONT_HERSHEY_DUPLEX = 2,
+            FONT_HERSHEY_COMPLEX = 3,
+            FONT_HERSHEY_TRIPLEX = 4,
+            FONT_HERSHEY_COMPLEX_SMALL = 5,
+            FONT_HERSHEY_SCRIPT_SIMPLEX = 6,
+            FONT_HERSHEY_SCRIPT_COMPLEX = 7,
+            FONT_ITALIC = 16;
+
+
+    // C++: enum LineTypes
+    public static final int
+            LINE_4 = 4,
+            LINE_8 = 8,
+            LINE_AA = 16;
+
+
     // C++: enum BorderTypes
     public static final int
             BORDER_CONSTANT = 0,
@@ -61,8 +81,8 @@ public class Core {
             BORDER_WRAP = 3,
             BORDER_REFLECT_101 = 4,
             BORDER_TRANSPARENT = 5,
-            BORDER_REFLECT101 = BORDER_REFLECT_101,
-            BORDER_DEFAULT = BORDER_REFLECT_101,
+            BORDER_REFLECT101 = 4,
+            BORDER_DEFAULT = 4,
             BORDER_ISOLATED = 16;
 
 
@@ -90,6 +110,39 @@ public class Core {
             CMP_NE = 5;
 
 
+    // C++: enum <unnamed>
+    public static final int
+            SVD_MODIFY_A = 1,
+            SVD_NO_UV = 2,
+            SVD_FULL_UV = 4,
+            FILLED = -1,
+            REDUCE_SUM = 0,
+            REDUCE_AVG = 1,
+            REDUCE_MAX = 2,
+            REDUCE_MIN = 3,
+            Hamming_normType = 6,
+            RNG_UNIFORM = 0,
+            RNG_NORMAL = 1,
+            Formatter_FMT_DEFAULT = 0,
+            Formatter_FMT_MATLAB = 1,
+            Formatter_FMT_CSV = 2,
+            Formatter_FMT_PYTHON = 3,
+            Formatter_FMT_NUMPY = 4,
+            Formatter_FMT_C = 5,
+            Param_INT = 0,
+            Param_BOOLEAN = 1,
+            Param_REAL = 2,
+            Param_STRING = 3,
+            Param_MAT = 4,
+            Param_MAT_VECTOR = 5,
+            Param_ALGORITHM = 6,
+            Param_FLOAT = 7,
+            Param_UNSIGNED_INT = 8,
+            Param_UINT64 = 9,
+            Param_UCHAR = 11,
+            Param_SCALAR = 12;
+
+
     // C++: enum Flags
     public static final int
             PCA_DATA_AS_ROW = 0,
@@ -105,29 +158,18 @@ public class Core {
             DFT_COMPLEX_OUTPUT = 16,
             DFT_REAL_OUTPUT = 32,
             DFT_COMPLEX_INPUT = 64,
-            DCT_INVERSE = DFT_INVERSE,
-            DCT_ROWS = DFT_ROWS;
+            DCT_INVERSE = 1,
+            DCT_ROWS = 4;
 
 
-    // C++: enum <unnamed>
+    // C++: enum CovarFlags
     public static final int
-            SVD_MODIFY_A = 1,
-            SVD_NO_UV = 2,
-            SVD_FULL_UV = 4,
-            FILLED = -1,
-            REDUCE_SUM = 0,
-            REDUCE_AVG = 1,
-            REDUCE_MAX = 2,
-            REDUCE_MIN = 3,
-            RNG_UNIFORM = 0,
-            RNG_NORMAL = 1;
-
-
-    // C++: enum IMPL
-    public static final int
-            IMPL_PLAIN = 0,
-            IMPL_IPP = 0+1,
-            IMPL_OPENCL = 0+2;
+            COVAR_SCRAMBLED = 0,
+            COVAR_NORMAL = 1,
+            COVAR_USE_AVG = 2,
+            COVAR_SCALE = 4,
+            COVAR_ROWS = 8,
+            COVAR_COLS = 16;
 
 
     // C++: enum FLAGS
@@ -145,16 +187,6 @@ public class Core {
             TYPE_FUN = 0+3;
 
 
-    // C++: enum FormatType
-    public static final int
-            Formatter_FMT_DEFAULT = 0,
-            Formatter_FMT_MATLAB = 1,
-            Formatter_FMT_CSV = 2,
-            Formatter_FMT_PYTHON = 3,
-            Formatter_FMT_NUMPY = 4,
-            Formatter_FMT_C = 5;
-
-
     // C++: enum SortFlags
     public static final int
             SORT_EVERY_ROW = 0,
@@ -163,30 +195,11 @@ public class Core {
             SORT_DESCENDING = 16;
 
 
-    // C++: enum CovarFlags
+    // C++: enum IMPL
     public static final int
-            COVAR_SCRAMBLED = 0,
-            COVAR_NORMAL = 1,
-            COVAR_USE_AVG = 2,
-            COVAR_SCALE = 4,
-            COVAR_ROWS = 8,
-            COVAR_COLS = 16;
-
-
-    // C++: enum Param
-    public static final int
-            Param_INT = 0,
-            Param_BOOLEAN = 1,
-            Param_REAL = 2,
-            Param_STRING = 3,
-            Param_MAT = 4,
-            Param_MAT_VECTOR = 5,
-            Param_ALGORITHM = 6,
-            Param_FLOAT = 7,
-            Param_UNSIGNED_INT = 8,
-            Param_UINT64 = 9,
-            Param_UCHAR = 11,
-            Param_SCALAR = 12;
+            IMPL_PLAIN = 0,
+            IMPL_IPP = 0+1,
+            IMPL_OPENCL = 0+2;
 
 
     // C++: enum NormTypes
@@ -532,6 +545,20 @@ public class Core {
 
 
     //
+    // C++:  bool cv::ipp::useIPP_NE()
+    //
+
+    //javadoc: useIPP_NE()
+    public static boolean useIPP_NE()
+    {
+        
+        boolean retVal = useIPP_NE_0();
+        
+        return retVal;
+    }
+
+
+    //
     // C++:  bool cv::ipp::useIPP_NotExact()
     //
 
@@ -560,23 +587,14 @@ public class Core {
 
 
     //
-    // C++:  double cv::PSNR(Mat src1, Mat src2, double R = 255.)
+    // C++:  double cv::PSNR(Mat src1, Mat src2)
     //
-
-    //javadoc: PSNR(src1, src2, R)
-    public static double PSNR(Mat src1, Mat src2, double R)
-    {
-        
-        double retVal = PSNR_0(src1.nativeObj, src2.nativeObj, R);
-        
-        return retVal;
-    }
 
     //javadoc: PSNR(src1, src2)
     public static double PSNR(Mat src1, Mat src2)
     {
         
-        double retVal = PSNR_1(src1.nativeObj, src2.nativeObj);
+        double retVal = PSNR_0(src1.nativeObj, src2.nativeObj);
         
         return retVal;
     }
@@ -1520,20 +1538,6 @@ public class Core {
     {
         
         copyMakeBorder_1(src.nativeObj, dst.nativeObj, top, bottom, left, right, borderType);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void cv::copyTo(Mat src, Mat& dst, Mat mask)
-    //
-
-    //javadoc: copyTo(src, dst, mask)
-    public static void copyTo(Mat src, Mat dst, Mat mask)
-    {
-        
-        copyTo_0(src.nativeObj, dst.nativeObj, mask.nativeObj);
         
         return;
     }
@@ -2653,6 +2657,20 @@ public class Core {
 
 
     //
+    // C++:  void cv::ipp::setUseIPP_NE(bool flag)
+    //
+
+    //javadoc: setUseIPP_NE(flag)
+    public static void setUseIPP_NE(boolean flag)
+    {
+        
+        setUseIPP_NE_0(flag);
+        
+        return;
+    }
+
+
+    //
     // C++:  void cv::ipp::setUseIPP_NotExact(bool flag)
     //
 
@@ -2784,15 +2802,17 @@ public static MinMaxLocResult minMaxLoc(Mat src) {
     // C++:  bool cv::ipp::useIPP()
     private static native boolean useIPP_0();
 
+    // C++:  bool cv::ipp::useIPP_NE()
+    private static native boolean useIPP_NE_0();
+
     // C++:  bool cv::ipp::useIPP_NotExact()
     private static native boolean useIPP_NotExact_0();
 
     // C++:  double cv::Mahalanobis(Mat v1, Mat v2, Mat icovar)
     private static native double Mahalanobis_0(long v1_nativeObj, long v2_nativeObj, long icovar_nativeObj);
 
-    // C++:  double cv::PSNR(Mat src1, Mat src2, double R = 255.)
-    private static native double PSNR_0(long src1_nativeObj, long src2_nativeObj, double R);
-    private static native double PSNR_1(long src1_nativeObj, long src2_nativeObj);
+    // C++:  double cv::PSNR(Mat src1, Mat src2)
+    private static native double PSNR_0(long src1_nativeObj, long src2_nativeObj);
 
     // C++:  double cv::determinant(Mat mtx)
     private static native double determinant_0(long mtx_nativeObj);
@@ -2967,9 +2987,6 @@ public static MinMaxLocResult minMaxLoc(Mat src) {
     // C++:  void cv::copyMakeBorder(Mat src, Mat& dst, int top, int bottom, int left, int right, int borderType, Scalar value = Scalar())
     private static native void copyMakeBorder_0(long src_nativeObj, long dst_nativeObj, int top, int bottom, int left, int right, int borderType, double value_val0, double value_val1, double value_val2, double value_val3);
     private static native void copyMakeBorder_1(long src_nativeObj, long dst_nativeObj, int top, int bottom, int left, int right, int borderType);
-
-    // C++:  void cv::copyTo(Mat src, Mat& dst, Mat mask)
-    private static native void copyTo_0(long src_nativeObj, long dst_nativeObj, long mask_nativeObj);
 
     // C++:  void cv::dct(Mat src, Mat& dst, int flags = 0)
     private static native void dct_0(long src_nativeObj, long dst_nativeObj, int flags);
@@ -3174,6 +3191,9 @@ public static MinMaxLocResult minMaxLoc(Mat src) {
 
     // C++:  void cv::ipp::setUseIPP(bool flag)
     private static native void setUseIPP_0(boolean flag);
+
+    // C++:  void cv::ipp::setUseIPP_NE(bool flag)
+    private static native void setUseIPP_NE_0(boolean flag);
 
     // C++:  void cv::ipp::setUseIPP_NotExact(bool flag)
     private static native void setUseIPP_NotExact_0(boolean flag);

@@ -25,6 +25,11 @@ import org.opencv.utils.Converters;
 
 public class Photo {
 
+    private static final int
+            CV_INPAINT_NS = 0,
+            CV_INPAINT_TELEA = 1;
+
+
     // C++: enum <unnamed>
     public static final int
             INPAINT_NS = 0,

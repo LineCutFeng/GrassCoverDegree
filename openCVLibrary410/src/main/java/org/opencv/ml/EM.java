@@ -36,7 +36,7 @@ public class EM extends StatModel {
             COV_MAT_SPHERICAL = 0,
             COV_MAT_DIAGONAL = 1,
             COV_MAT_GENERIC = 2,
-            COV_MAT_DEFAULT = COV_MAT_DIAGONAL;
+            COV_MAT_DEFAULT = 1;
 
 
     //

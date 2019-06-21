@@ -17,7 +17,7 @@ public class KAZE extends Feature2D {
     // internal usage only
     public static KAZE __fromPtr__(long addr) { return new KAZE(addr); }
 
-    // C++: enum DiffusivityType
+    // C++: enum <unnamed>
     public static final int
             DIFF_PM_G1 = 0,
             DIFF_PM_G2 = 1,
@@ -26,21 +26,7 @@ public class KAZE extends Feature2D {
 
 
     //
-    // C++:  KAZE_DiffusivityType cv::KAZE::getDiffusivity()
-    //
-
-    //javadoc: KAZE::getDiffusivity()
-    public  int getDiffusivity()
-    {
-        
-        int retVal = getDiffusivity_0(nativeObj);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++: static Ptr_KAZE cv::KAZE::create(bool extended = false, bool upright = false, float threshold = 0.001f, int nOctaves = 4, int nOctaveLayers = 4, KAZE_DiffusivityType diffusivity = KAZE::DIFF_PM_G2)
+    // C++: static Ptr_KAZE cv::KAZE::create(bool extended = false, bool upright = false, float threshold = 0.001f, int nOctaves = 4, int nOctaveLayers = 4, int diffusivity = KAZE::DIFF_PM_G2)
     //
 
     //javadoc: KAZE::create(extended, upright, threshold, nOctaves, nOctaveLayers, diffusivity)
@@ -164,6 +150,20 @@ public class KAZE extends Feature2D {
 
 
     //
+    // C++:  int cv::KAZE::getDiffusivity()
+    //
+
+    //javadoc: KAZE::getDiffusivity()
+    public  int getDiffusivity()
+    {
+        
+        int retVal = getDiffusivity_0(nativeObj);
+        
+        return retVal;
+    }
+
+
+    //
     // C++:  int cv::KAZE::getNOctaveLayers()
     //
 
@@ -192,7 +192,7 @@ public class KAZE extends Feature2D {
 
 
     //
-    // C++:  void cv::KAZE::setDiffusivity(KAZE_DiffusivityType diff)
+    // C++:  void cv::KAZE::setDiffusivity(int diff)
     //
 
     //javadoc: KAZE::setDiffusivity(diff)
@@ -282,10 +282,7 @@ public class KAZE extends Feature2D {
 
 
 
-    // C++:  KAZE_DiffusivityType cv::KAZE::getDiffusivity()
-    private static native int getDiffusivity_0(long nativeObj);
-
-    // C++: static Ptr_KAZE cv::KAZE::create(bool extended = false, bool upright = false, float threshold = 0.001f, int nOctaves = 4, int nOctaveLayers = 4, KAZE_DiffusivityType diffusivity = KAZE::DIFF_PM_G2)
+    // C++: static Ptr_KAZE cv::KAZE::create(bool extended = false, bool upright = false, float threshold = 0.001f, int nOctaves = 4, int nOctaveLayers = 4, int diffusivity = KAZE::DIFF_PM_G2)
     private static native long create_0(boolean extended, boolean upright, float threshold, int nOctaves, int nOctaveLayers, int diffusivity);
     private static native long create_1(boolean extended, boolean upright, float threshold, int nOctaves, int nOctaveLayers);
     private static native long create_2(boolean extended, boolean upright, float threshold, int nOctaves);
@@ -306,13 +303,16 @@ public class KAZE extends Feature2D {
     // C++:  double cv::KAZE::getThreshold()
     private static native double getThreshold_0(long nativeObj);
 
+    // C++:  int cv::KAZE::getDiffusivity()
+    private static native int getDiffusivity_0(long nativeObj);
+
     // C++:  int cv::KAZE::getNOctaveLayers()
     private static native int getNOctaveLayers_0(long nativeObj);
 
     // C++:  int cv::KAZE::getNOctaves()
     private static native int getNOctaves_0(long nativeObj);
 
-    // C++:  void cv::KAZE::setDiffusivity(KAZE_DiffusivityType diff)
+    // C++:  void cv::KAZE::setDiffusivity(int diff)
     private static native void setDiffusivity_0(long nativeObj, int diff);
 
     // C++:  void cv::KAZE::setExtended(bool extended)
