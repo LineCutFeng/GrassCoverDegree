@@ -8,9 +8,22 @@
     tools:context=".MainActivity">
 
     <ImageView
-        android:id="@+id/iv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/iv1"
+        android:layout_width="640px"
+        android:layout_height="480px"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv2"
+        android:layout_width="640px"
+        android:layout_height="480px"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
