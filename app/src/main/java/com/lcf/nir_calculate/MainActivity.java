@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.io.IOException;
@@ -26,11 +28,14 @@ public class MainActivity extends AppCompatActivity {
     String[] premission = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     public static final int REQUEST_PERMISSION = 101;
     //    String picPath1 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/band3.png";
-    String dirTempPath = "sample10";
+    String dirTempPath = "sample13";
     String picPath0 = "file:///android_asset/" + dirTempPath + "/sample_origin.jpg";
-    String picPath1 = "file:///android_asset/" + dirTempPath + "/sample_in.jpg";
-    //    String picPath2 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/band4.png";
-    String picPath2 = "file:///android_asset/" + dirTempPath + "/sample_out.jpg";
+//    String picPath1 = "file:///android_asset/" + dirTempPath + "/sample_in.jpg";
+//    //    String picPath2 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/band4.png";
+//    String picPath2 = "file:///android_asset/" + dirTempPath + "/sample_out.jpg";
+
+    Bitmap pic1 = null;
+    Bitmap pic2 = null;
 
     boolean hasPermission = false;
     private ImageView iv0;
@@ -91,7 +96,13 @@ public class MainActivity extends AppCompatActivity {
         try {
             double greenCount = 0;
             bitmap1 = BitmapFactory.decodeStream(getAssets().open(dirTempPath + "/sample_in.jpg"));
+            Matrix matrix = new Matrix();
+            matrix.postRotate(-1, 0, bitmap1.getHeight() - 10);
+            bitmap1 = Bitmap.createBitmap(bitmap1, 0, 10, bitmap1.getWidth() - 22, bitmap1.getHeight() - 10, null, false);
+            pic1 = bitmap1;
             bitmap2 = BitmapFactory.decodeStream(getAssets().open(dirTempPath + "/sample_out.jpg"));
+            bitmap2 = Bitmap.createBitmap(bitmap2, 22, 0, bitmap2.getWidth() - 22, bitmap2.getHeight() - 10, matrix, false);
+            pic2 = bitmap2;
             int minW = Math.min(bitmap1.getWidth(), bitmap2.getWidth());
             int minH = Math.min(bitmap1.getHeight(), bitmap2.getHeight());
             int[] pixel1 = new int[minW * minH];
@@ -114,8 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 if (ndvi[i] >= 0.1) {
                     System.out.println("绿色像素值:" + ndvi[i] + " 绿色像素坐标：" + i);
                     greenCount++;
-                }
-                else if (ndvi[i] >= 0.05) {
+                } else if (ndvi[i] >= 0.05) {
                     System.out.println("绿色像素值:" + ndvi[i] + " 绿色像素坐标：" + i);
                     greenCount += (ndvi[i] / 0.1);
                 }
@@ -125,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             progress.setProgress(percent);
             tvDegree.setText("覆盖度：" + percent + "%");
 
-            merge2Color(pixel1, ndvi, Color.rgb(239,200,143), Color.parseColor("#2abb46"));
+            merge2Color(pixel1, ndvi, Color.rgb(239, 200, 143), Color.parseColor("#2abb46"));
             System.out.println("结束算");
             Bitmap bitmap = Bitmap.createBitmap(minW, minH, Bitmap.Config.ARGB_8888);
             bitmap.setPixels(pixel1, 0, minW, 0, 0, minW, minH);
@@ -133,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     .applyDefaultRequestOptions(new RequestOptions().centerCrop())
                     .load(bitmap)
                     .into(iv3);
+            showPicByBoolean();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -166,16 +177,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void showPicByBoolean() {
         Glide.with(this)
-                .applyDefaultRequestOptions(new RequestOptions().centerCrop())
+                .applyDefaultRequestOptions(new RequestOptions().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE))
                 .load(picPath0)
                 .into(iv0);
         Glide.with(this)
-                .applyDefaultRequestOptions(new RequestOptions().centerCrop())
-                .load(showNotReverse ? picPath1 : picPath2)
+                .applyDefaultRequestOptions(new RequestOptions().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE))
+                .load(showNotReverse ? pic1 : pic2)
                 .into(iv1);
         Glide.with(this)
-                .applyDefaultRequestOptions(new RequestOptions().centerCrop())
-                .load(showNotReverse ? picPath2 : picPath1)
+                .applyDefaultRequestOptions(new RequestOptions().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE))
+                .load(showNotReverse ? pic2 : pic1)
                 .into(iv2);
     }
 

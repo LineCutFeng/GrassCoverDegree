@@ -1029,7 +1029,7 @@ public class Mat {
  * <p>so that the destination matrix is reallocated if needed. While
  * <code>m.copyTo(m);</code> works flawlessly, the function does not handle the
  * case of a partial overlap between the source and the destination matrices.
- * </code></p>
+ * </code></p>fdf
  *
  * <p>When the operation mask is specified, if the <code>Mat.create</code> call
  * shown above reallocates the matrix, the newly allocated matrix is initialized
