@@ -176,8 +176,8 @@ public class MainActivity extends AppCompatActivity {
     private void distinctConerPoint() {
 
         try {
-            resultOrigin1 = BitmapFactory.decodeStream(getAssets().open("sample7/sample_in.jpg"));
-            resultOrigin2 = BitmapFactory.decodeStream(getAssets().open("sample7/sample_out.jpg"));
+            resultOrigin1 = BitmapFactory.decodeStream(getAssets().open("sample2/sample_in.jpg"));
+            resultOrigin2 = BitmapFactory.decodeStream(getAssets().open("sample2/sample_out.jpg"));
             showPicOrigin();
         } catch (IOException e) {
             e.printStackTrace();
@@ -196,9 +196,9 @@ public class MainActivity extends AppCompatActivity {
         double imgScale = 1.0;
         try {
             Mat src1 = new Mat();
-            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("sample7/sample_in.jpg")), src1);
+            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("sample2/sample_in.jpg")), src1);
             Mat src2 = new Mat();
-            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("sample7/sample_out.jpg")), src2);
+            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("sample2/sample_out.jpg")), src2);
             {
                 for (int i = 0; i < 1; i++) {
                     Mat srcL = new Mat();
@@ -374,10 +374,28 @@ public class MainActivity extends AppCompatActivity {
             Imgproc.remap(src1, dst1, map1x, map1y, Imgproc.INTER_LINEAR);
             Imgproc.remap(src2, dst2, map2x, map2y, Imgproc.INTER_LINEAR);
             System.out.println("图像校正完成");
+
+
             result1 = Bitmap.createBitmap(dst1.width(), dst1.height(), Bitmap.Config.ARGB_8888);
             result2 = Bitmap.createBitmap(dst1.width(), dst2.height(), Bitmap.Config.ARGB_8888);
+
             Utils.matToBitmap(dst1, result1);
+            int R1 = 1;
+            while (hasNoNullPixel(result1, R1)) {
+                R1++;
+            }
+            R1--;
+            System.out.println(R1);
             Utils.matToBitmap(dst2, result2);
+            int R2 = 1;
+            while (hasNoNullPixel(result2, R2)) {
+                R2++;
+            }
+            R2--;
+            System.out.println(R2);
+            int RMin = Math.min(R1, R2);
+            result1 = Bitmap.createBitmap(result1, result1.getWidth() / 2 - RMin, result1.getHeight() / 2 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
+            result2 = Bitmap.createBitmap(result2, result2.getWidth() / 2 - RMin-5, result2.getHeight() / 2 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
             showPic();
             System.out.println("图像显示完毕");
 
@@ -385,6 +403,33 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    private boolean hasNoNullPixel(Bitmap result, int L) {
+        if (L > result.getWidth() / 2 ||
+                L > result.getHeight() / 2) {
+            return false;
+        }
+        int centerX = result.getWidth() / 2;
+        int centerY = result.getHeight() / 2;
+        int minX = centerX - L;
+        int maxX = centerX + L;
+        int minY = centerY - L;
+        int maxY = centerY + L;
+        for (int x = minX; x <= maxX; x++) {
+            if (result.getPixel(x, minY) == 0)
+                return false;
+            if (result.getPixel(x, maxY) == 0)
+                return false;
+        }
+        for (int y = minY; y <= maxY; y++) {
+            if (result.getPixel(minX, y) == 0)
+                return false;
+            if (result.getPixel(maxY, y) == 0)
+                return false;
+        }
+        return true;
+    }
+
 
     private void showPic() {
         Glide.with(this)
