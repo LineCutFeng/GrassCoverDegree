@@ -6,20 +6,38 @@ import android.graphics.BitmapFactory;
 
 import org.opencv.android.Utils;
 import org.opencv.calib3d.Calib3d;
+import org.opencv.calib3d.StereoSGBM;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfDMatch;
+import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.MatOfPoint3f;
 import org.opencv.core.Point3;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.core.TermCriteria;
+import org.opencv.features2d.DMatch;
+import org.opencv.features2d.DescriptorExtractor;
+import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class PicUtils {
+
+    /**
+     * 矫正双目摄像头
+     *
+     * @param context
+     * @param result1
+     * @param result2
+     * @return
+     */
     public static List<Bitmap> calibrateDualCamera(Context context, Bitmap result1, Bitmap result2) {
         System.out.println("开始提取");
         List<Mat> objectPoints = new ArrayList<>();//角点的实际物理坐标
@@ -108,13 +126,13 @@ public class PicUtils {
             {
                 double[][][] cameraArray = new double[][][]{
                         {
-                                {586.0564078625439, 0.0, 295.3086849227241},
-                                {0.0, 585.4118048897083, 206.3912604805205},
+                                {591.7003546879771, 0.0, 298.69574852625595},
+                                {0.0, 591.5899685070495, 206.1120051364847},
                                 {0.0, 0.0, 1.0},
                         },
                         {
-                                {590.8272115948905, 0.0, 328.63509506971565},
-                                {0.0, 590.1454285679533, 195.60953766537318},
+                                {598.4206627473541, 0.0, 328.5788779504157},
+                                {0.0, 598.2210879757324, 195.90708769694876},
                                 {0.0, 0.0, 1.0},
                         }
                 };
@@ -129,10 +147,10 @@ public class PicUtils {
 
                 double[][][] dist = new double[][][]{
                         {
-                                {-0.002591520208037512, 0.3815664120916118, -0.001992809428458405, 0.0021681190102660836, -1.2682380299294251}
+                                {0.004045538804547804, 0.14406226762879215, -0.0037431600102399297, 0.002829414069931479, 0.20637962419970457}
                         },
                         {
-                                {0.09278449522151463, -0.910400548216305, 7.240862105747525E-4, -2.6696772582669617E-4, 3.6944628764557774}
+                                {0.02134807761291104, -0.04010339987136857, -0.0010387141810351802, 0.00877366849309704, 0.5034542711715101}
                         }
                 };
                 for (int i = 0; i < distCoeffs.length; i++) {
@@ -147,9 +165,9 @@ public class PicUtils {
             {
 
                 double[][] RArray = new double[][]{
-                        {0.9998455917030901, -0.017222784287587903, 0.0034883310165313274},
-                        {0.017238701025919574, 0.9998408881248751, -0.004585370279479617},
-                        {-0.003408803138440045, 0.00464479655573748, 0.9999834028253265},
+                        {0.9995738051575416, -0.01841833481500854, -0.022648906938642452},
+                        {0.018301540474601523, 0.9998181815634215, -0.005353263627881041},
+                        {0.022743387151643972, 0.004936472207489476, 0.9997291481111347}
                 };
                 for (int i1 = 0; i1 < 3; i1++) {
                     for (int i2 = 0; i2 < 3; i2++) {
@@ -159,9 +177,9 @@ public class PicUtils {
                 }
 
                 double[][] TArray = new double[][]{
-                        {17.409579295631502},
-                        {-0.16005063237580344},
-                        {1.726390043161054}
+                        {17.88820001445013},
+                        {-1.3872845041127477},
+                        {1.281559974162247}
                 };
                 for (int i1 = 0; i1 < 3; i1++) {
                     for (int i2 = 0; i2 < 1; i2++) {
@@ -216,7 +234,12 @@ public class PicUtils {
 
             result1 = Bitmap.createBitmap(dst1.width(), dst1.height(), Bitmap.Config.ARGB_8888);
             result2 = Bitmap.createBitmap(dst1.width(), dst2.height(), Bitmap.Config.ARGB_8888);
-
+            StereoSGBM stereoSGBM = new StereoSGBM(-16, 64, 5);
+            Mat disp = new Mat();
+            Mat disp8 = new Mat();
+            stereoSGBM.set_preFilterCap(31);
+            stereoSGBM.compute(dst1, dst2, disp);
+            disp.convertTo(disp8, CvType.CV_8U, 255 / (64 * 16.0));
             Utils.matToBitmap(dst1, result1);
             int R1 = 1;
             while (hasNoNullPixel(result1, R1)) {
@@ -232,8 +255,10 @@ public class PicUtils {
             R2--;
             System.out.println(R2);
             int RMin = Math.min(R1, R2);
-            result1 = Bitmap.createBitmap(result1, result1.getWidth() / 2 - RMin, result1.getHeight() / 2 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
-            result2 = Bitmap.createBitmap(result2, result2.getWidth() / 2 - RMin - 5, result2.getHeight() / 2 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
+            int xOffset = 15;
+            int yOffset = 3;
+            result1 = Bitmap.createBitmap(result1, result1.getWidth() / 2 - 19 - RMin, result1.getHeight() / 2 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
+            result2 = Bitmap.createBitmap(result2, result2.getWidth() / 2 - RMin, result2.getHeight() / 2 + 1 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
             ArrayList<Bitmap> bitmaps = new ArrayList<>();
             bitmaps.add(result1);
             bitmaps.add(result2);
@@ -246,6 +271,13 @@ public class PicUtils {
         return new ArrayList<>();
     }
 
+    /**
+     * 添加实际空间坐标点
+     *
+     * @param patSize
+     * @param patLen
+     * @return
+     */
     private static MatOfPoint3f calRealPoint(Size patSize, double patLen) {
         MatOfPoint3f matOfPoint3f = new MatOfPoint3f();
         List<Point3> point3List = new ArrayList<>();
@@ -256,6 +288,68 @@ public class PicUtils {
         }
         matOfPoint3f.fromList(point3List);
         return matOfPoint3f;
+    }
+
+    /**
+     * 计算空间匹配像素
+     *
+     * @param sr1
+     * @param src
+     * @return
+     */
+    private static int translateDistance(Bitmap sr1, Bitmap src) {
+        try {
+            Mat src1 = new Mat();
+            Utils.bitmapToMat(sr1, src1);
+            Mat src2 = new Mat();
+            Utils.bitmapToMat(src, src2);
+            FeatureDetector detector = FeatureDetector.create(FeatureDetector.ORB);
+            DescriptorExtractor descriptor = DescriptorExtractor.create(DescriptorExtractor.ORB);
+
+            MatOfKeyPoint keypoints1, keypoints2;
+            Mat descriptors1, descriptors2;
+            DescriptorMatcher descriptorMatcher;
+            MatOfDMatch matches = new MatOfDMatch();
+            keypoints1 = new MatOfKeyPoint();
+            keypoints2 = new MatOfKeyPoint();
+            descriptors1 = new Mat();
+            descriptors2 = new Mat();
+
+            //特征匹配算法
+            detector = FeatureDetector.create(FeatureDetector.ORB);
+            descriptor = DescriptorExtractor.create(DescriptorExtractor.ORB);
+
+
+            //检测关键点
+            detector.detect(src1, keypoints1);
+            detector.detect(src2, keypoints2);
+//            //添加变量，用于显示关键点数量
+//            int keypointsObject1 = keypoints1.toArray().length;
+//            int keypointsObject2 = keypoints2.toArray().length;
+            //计算描述子
+            descriptor.compute(src1, keypoints1, descriptors1);
+            descriptor.compute(src2, keypoints2, descriptors2);
+
+
+            descriptorMatcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMINGLUT);//基于FLANN匹配器
+            descriptorMatcher.match(descriptors1, descriptors2, matches);
+            List<DMatch> dMatches = new ArrayList<>(matches.toList());
+            Collections.sort(dMatches, new Comparator<DMatch>() {
+                @Override
+                public int compare(DMatch o1, DMatch o2) {
+                    return (int) (o1.distance - o2.distance);
+                }
+            });
+//            double maxDistance = dMatches.get(dMatches.size() - 1).distance;
+
+            List<DMatch> tenMatches = new ArrayList<>(dMatches.subList(0, 10));
+            System.out.println("取到了");
+            MatOfDMatch goodMatches = new MatOfDMatch();
+            goodMatches.fromList(tenMatches);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     private static boolean hasNoNullPixel(Bitmap result, int L) {

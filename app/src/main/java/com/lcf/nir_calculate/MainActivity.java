@@ -3,7 +3,7 @@ package com.lcf.nir_calculate;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.lcf.nir_calculate.adapter.FileListAdapter;
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         fileListAdapter = new FileListAdapter(this, nameList);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 2);
         picList.setLayoutManager(layoutManager);
         picList.setAdapter(fileListAdapter);
     }

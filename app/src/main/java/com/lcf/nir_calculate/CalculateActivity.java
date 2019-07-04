@@ -26,11 +26,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.lcf.nir_calculate.utils.PicUtils;
 
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -209,25 +204,35 @@ public class CalculateActivity extends AppCompatActivity {
 //                    }
 //                }
 //            }
+
             int[][] core = {
-                    {0, 1, 0},
-                    {0, 1, 1},
-                    {0, 0, 0}
+                    {1, 1, 1, 1, 1, 1, 1},
+                    {1, 1, 1, 1, 1, 1, 1},
+                    {1, 1, 1, 1, 1, 1, 1},
+                    {1, 1, 1, 1, 1, 1, 1},
+                    {1, 1, 1, 1, 1, 1, 1},
+                    {1, 1, 1, 1, 1, 1, 1},
+                    {1, 1, 1, 1, 1, 1, 1}
+
             };
             MyDilate(ndvi, minW, minH, core);
 
 
-//            merge2Color(pixel1, ndvi, Color.rgb(239, 200, 143), Color.parseColor("#2abb46"));
-            merge2Color(pixel1, ndvi, Color.BLACK, Color.parseColor("#2abb46"));
+            merge2Color(pixel1, ndvi, Color.rgb(239, 200, 143), Color.parseColor("#2abb46"));
+//            merge2Color(pixel1, ndvi, Color.BLACK, Color.parseColor("#2abb46"));
             System.out.println("结束算");
             Bitmap bitmap = Bitmap.createBitmap(minW, minH, Bitmap.Config.ARGB_8888);
             bitmap.setPixels(pixel1, 0, minW, 0, 0, minW, minH);
-            Mat src = new Mat();
-            Utils.bitmapToMat(bitmap, src);
-            Mat dst = new Mat();
-            Mat kernal = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3, 3));
-            Imgproc.dilate(src, dst, kernal, new Point(-1, -1), 1);
-            Utils.matToBitmap(dst, bitmap);
+
+            {
+//                Mat src = new Mat();
+//                Utils.bitmapToMat(bitmap, src);
+//                Mat dst = new Mat();
+//                Mat kernal = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
+//                Imgproc.dilate(src, dst, kernal, new Point(-1, -1), 1);
+//                Utils.matToBitmap(dst, bitmap);
+            }
+
             Glide.with(this)
                     .applyDefaultRequestOptions(new RequestOptions().centerCrop())
                     .load(bitmap)
@@ -236,10 +241,10 @@ public class CalculateActivity extends AppCompatActivity {
             bitmap.getPixels(pixel1, 0, minW, 0, 0, minW, minH);
             for (int i = 0; i < pixel1.length; i++) {
                 if (ndvi[i] >= 0.10) {
-                    System.out.println("绿色像素值:" + ndvi[i] + " 绿色像素坐标：" + i);
+//                    System.out.println("绿色像素值:" + ndvi[i] + " 绿色像素坐标：" + i);
                     greenCount++;
                 } else if (ndvi[i] >= 0.05) {
-                    System.out.println("绿色像素值:" + ndvi[i] + " 绿色像素坐标：" + i);
+//                    System.out.println("绿色像素值:" + ndvi[i] + " 绿色像素坐标：" + i);
                     greenCount += ((ndvi[i] - 0.05) / (0.10 - 0.05));
                 } else {
 
@@ -257,37 +262,66 @@ public class CalculateActivity extends AppCompatActivity {
     }
 
     private void MyDilate(float[] ndvi, int minW, int minH, int[][] core) {
-        for (int i = 0; i < ndvi.length; i++) {
-            int row = i / minW;
-            int col = i % minW;
-            float min = 0;
-            for (int i1 = 0; i1 < core.length; i1++) {
-                for (int i2 = 0; i2 < core[0].length; i2++) {
-                    int y = row - core.length / 2 + i1;
-                    int x = col - core[0].length / 2 + i2;
-                    if ((x >= 0 && x < minW) &&
-                            (y >= 0 && y < minH)) {
-                        if (core[i1][i2] != 0) {
-//                            try {
-                                float value = ndvi[y * minW + x];
-                                if (value >= 0.05) {
-                                    if (min == 0 || value < min) {
-                                        min = value;
-                                    }
+        float[] ndviCopy = ndvi.clone();
+        for (int i = core.length / 2; i < minH - 1; i++) {
+            for (int j = core.length / 2; j < minW - 1; j++) {
+                float max = 0;
+                int startY = i - core.length / 2;
+                int startX = j - core.length / 2;
+                if ((startY >= 0 && startY < minH) &&
+                        (startX >= 0 && startX < minW)) {
+                    for (int i1 = 0; i1 < core.length; i1++) {
+                        for (int i2 = 0; i2 < core[0].length; i2++) {
+                            float value = ndvi[(startY + i1) * minW + (startX + i2)];
+                            if (value > 0.05) {
+                                if (max == 0 || value > max) {
+                                    max = value;
                                 }
-//                            } catch (Exception e) {
-//                                System.out.println("y=" + y);
-//                                e.printStackTrace();
-//                            }
+                            }
                         }
                     }
-
+                    if (max != 0) {
+//                    if (ndvi[i * minW + j] < max) {
+                        ndviCopy[i * minW + j] = max;
+//                    }
+                    }
                 }
             }
-            if (min != 0) {
-                ndvi[i] = min;
-            }
         }
+        System.arraycopy(ndvi, 0, ndvi, 0, ndviCopy.length);
+//        for (int i = 0; i < ndvi.length; i += 2) {
+//            int row = i / minW;
+//            int col = i % minW;
+//            float max = 0;
+//            for (int i1 = 0; i1 < core.length; i1++) {
+//                for (int i2 = 0; i2 < core[0].length; i2++) {
+//                    int y = row - core.length / 2 + i1;
+//                    int x = col - core[0].length / 2 + i2;
+//                    if ((x >= 0 && x < minW) &&
+//                            (y >= 0 && y < minH)) {
+//                        if (core[i1][i2] != 0) {
+////                            try {
+//                            float value = ndvi[y * minW + x];
+//                            if (value >= 0.05) {
+//                                if (max == 0 || value > max) {
+//                                    max = value;
+//                                }
+//                            }
+////                            } catch (Exception e) {
+////                                System.out.println("y=" + y);
+////                                e.printStackTrace();
+////                            }
+//                        }
+//                    }
+//
+//                }
+//            }
+//            if (max != 0) {
+//                if (ndvi[i] < max) {
+//                    ndvi[i] = max;
+//                }
+//            }
+//        }
     }
 
 

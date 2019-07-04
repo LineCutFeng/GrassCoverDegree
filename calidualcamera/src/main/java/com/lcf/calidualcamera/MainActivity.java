@@ -114,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
     private void distinctMatchPoint() {
         try {
             Mat src1 = new Mat();
-            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("sample1/sample_in.jpg")), src1);
+            Utils.bitmapToMat(result1, src1);
             Mat src2 = new Mat();
-            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("sample1/sample_out.jpg")), src2);
+            Utils.bitmapToMat(result2, src2);
             FeatureDetector detector = FeatureDetector.create(FeatureDetector.ORB);
             DescriptorExtractor descriptor = DescriptorExtractor.create(DescriptorExtractor.ORB);
 
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             });
             double maxDistance = dMatches.get(dMatches.size() - 1).distance;
 
-            List<DMatch> tenMatches = new ArrayList<>(dMatches.subList(0, 100));
+            List<DMatch> tenMatches = new ArrayList<>(dMatches.subList(0, 10));
             MatOfDMatch goodMatches = new MatOfDMatch();
             goodMatches.fromList(tenMatches);
             Mat outImg = new Mat();
@@ -176,8 +176,8 @@ public class MainActivity extends AppCompatActivity {
     private void distinctConerPoint() {
 
         try {
-            resultOrigin1 = BitmapFactory.decodeStream(getAssets().open("sample2/sample_in.jpg"));
-            resultOrigin2 = BitmapFactory.decodeStream(getAssets().open("sample2/sample_out.jpg"));
+            resultOrigin1 = BitmapFactory.decodeStream(getAssets().open("sample9/sample_in.jpg"));
+            resultOrigin2 = BitmapFactory.decodeStream(getAssets().open("sample9/sample_out.jpg"));
             showPicOrigin();
         } catch (IOException e) {
             e.printStackTrace();
@@ -196,9 +196,9 @@ public class MainActivity extends AppCompatActivity {
         double imgScale = 1.0;
         try {
             Mat src1 = new Mat();
-            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("sample2/sample_in.jpg")), src1);
+            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("sample9/sample_in.jpg")), src1);
             Mat src2 = new Mat();
-            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("sample2/sample_out.jpg")), src2);
+            Utils.bitmapToMat(BitmapFactory.decodeStream(getAssets().open("sample9/sample_out.jpg")), src2);
             {
                 for (int i = 0; i < 1; i++) {
                     Mat srcL = new Mat();
@@ -222,6 +222,8 @@ public class MainActivity extends AppCompatActivity {
                         objectPoints.add(calRealPoint(patSize, patLen));
                         objectPoints1.add(calRealPoint(patSize, patLen));
                         objectPoints2.add(calRealPoint(patSize, patLen));
+                    } else {
+                        System.out.println("特征点提取失败:" + i);
                     }
                 }
             }
@@ -255,7 +257,8 @@ public class MainActivity extends AppCompatActivity {
                             TermCriteria.MAX_ITER + TermCriteria.EPS,
                             100,
                             1e-5),
-                    Calib3d.CALIB_USE_INTRINSIC_GUESS
+//                    Calib3d.CALIB_USE_INTRINSIC_GUESS
+                    Calib3d.CALIB_FIX_INTRINSIC
             );
 
 
@@ -269,16 +272,39 @@ public class MainActivity extends AppCompatActivity {
 
             {
                 double[][][] cameraArray = new double[][][]{
+////                        {
+////                                {586.0564078625439, 0.0, 295.3086849227241},
+////                                {0.0, 585.4118048897083, 206.3912604805205},
+////                                {0.0, 0.0, 1.0},
+////                        },
+////                        {
+////                                {590.8272115948905, 0.0, 328.63509506971565},
+////                                {0.0, 590.1454285679533, 195.60953766537318},
+////                                {0.0, 0.0, 1.0},
+////                        }
                         {
-                                {586.0564078625439, 0.0, 295.3086849227241},
-                                {0.0, 585.4118048897083, 206.3912604805205},
+                                {591.7003546879771, 0.0, 298.69574852625595},
+                                {0.0, 591.5899685070495, 206.1120051364847},
                                 {0.0, 0.0, 1.0},
                         },
                         {
-                                {590.8272115948905, 0.0, 328.63509506971565},
-                                {0.0, 590.1454285679533, 195.60953766537318},
+                                {598.4206627473541, 0.0, 328.5788779504157},
+                                {0.0, 598.2210879757324, 195.90708769694876},
                                 {0.0, 0.0, 1.0},
                         }
+
+//                        {
+//                                {591.7003546879771, 0.0, 298.69574852625595},
+//                                {0.0, 591.5899685070495, 206.1120051364847},
+//                                {0.0, 0.0, 1.0},
+//                        },
+//                        {
+//                                {598.4206627473541, 0.0, 328.5788779504157},
+//                                {0.0, 598.2210879757324, 195.90708769694876},
+//                                {0.0, 0.0, 1.0},
+//                        }
+
+
                 };
                 for (int i = 0; i < cameraMatrix.length; i++) {
                     for (int i1 = 0; i1 < 3; i1++) {
@@ -290,12 +316,24 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 double[][][] dist = new double[][][]{
+////                        {
+////                                {-0.002591520208037512, 0.3815664120916118, -0.001992809428458405, 0.0021681190102660836, -1.2682380299294251}
+////                        },
+////                        {
+////                                {0.09278449522151463, -0.910400548216305, 7.240862105747525E-4, -2.6696772582669617E-4, 3.6944628764557774}
+////                        }
                         {
-                                {-0.002591520208037512, 0.3815664120916118, -0.001992809428458405, 0.0021681190102660836, -1.2682380299294251}
+                                {0.004045538804547804, 0.14406226762879215, -0.0037431600102399297, 0.002829414069931479, 0.20637962419970457}
                         },
                         {
-                                {0.09278449522151463, -0.910400548216305, 7.240862105747525E-4, -2.6696772582669617E-4, 3.6944628764557774}
+                                {0.02134807761291104, -0.04010339987136857, -0.0010387141810351802, 0.00877366849309704, 0.5034542711715101}
                         }
+//                        {
+//                                {-0.013768816520802932, 0.34695409510932723, -0.0041285968952895985, 0.004664374757827695, 0}
+//                        },
+//                        {
+//                                {0.0012836714819798344, 0.1867817173834978, -0.003630682681214696, 0.004020185190823957, 0}
+//                        }
                 };
                 for (int i = 0; i < distCoeffs.length; i++) {
                     for (int i1 = 0; i1 < 5; i1++) {
@@ -309,9 +347,17 @@ public class MainActivity extends AppCompatActivity {
             {
 
                 double[][] RArray = new double[][]{
-                        {0.9998455917030901, -0.017222784287587903, 0.0034883310165313274},
-                        {0.017238701025919574, 0.9998408881248751, -0.004585370279479617},
-                        {-0.003408803138440045, 0.00464479655573748, 0.9999834028253265},
+////                        {0.9998455917030901, -0.017222784287587903, 0.0034883310165313274},
+////                        {0.017238701025919574, 0.9998408881248751, -0.004585370279479617},
+////                        {-0.003408803138440045, 0.00464479655573748, 0.9999834028253265}
+////
+                        {0.9995738051575416, -0.01841833481500854, -0.022648906938642452},
+                        {0.018301540474601523, 0.9998181815634215, -0.005353263627881041},
+                        {0.022743387151643972, 0.004936472207489476, 0.9997291481111347}
+
+//                        {0.9998445186596026, -0.01762907296103306, 3.9280132652364674E-4},
+//                        {0.017628386311351107, 0.9998431832365008, 0.001687877826968399},
+//                        {-4.224954500518619E-4, -0.0016806909399338641, 0.9999984983866521}
                 };
                 for (int i1 = 0; i1 < 3; i1++) {
                     for (int i2 = 0; i2 < 3; i2++) {
@@ -321,9 +367,15 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 double[][] TArray = new double[][]{
-                        {17.409579295631502},
-                        {-0.16005063237580344},
-                        {1.726390043161054}
+////                        {17.409579295631502},
+////                        {1.281559974162247},
+////                        {1.726390043161054}
+                        {17.88820001445013},
+                        {-1.3872845041127477},
+                        {1.281559974162247}
+//                        {17.90228232882545},
+//                        {-0.9529363161131328},
+//                        {8.945908304883364}
                 };
                 for (int i1 = 0; i1 < 3; i1++) {
                     for (int i2 = 0; i2 < 1; i2++) {
@@ -374,8 +426,8 @@ public class MainActivity extends AppCompatActivity {
             Imgproc.remap(src1, dst1, map1x, map1y, Imgproc.INTER_LINEAR);
             Imgproc.remap(src2, dst2, map2x, map2y, Imgproc.INTER_LINEAR);
             System.out.println("图像校正完成");
-
-
+//
+//
             result1 = Bitmap.createBitmap(dst1.width(), dst1.height(), Bitmap.Config.ARGB_8888);
             result2 = Bitmap.createBitmap(dst1.width(), dst2.height(), Bitmap.Config.ARGB_8888);
 
@@ -395,7 +447,7 @@ public class MainActivity extends AppCompatActivity {
             System.out.println(R2);
             int RMin = Math.min(R1, R2);
             result1 = Bitmap.createBitmap(result1, result1.getWidth() / 2 - RMin, result1.getHeight() / 2 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
-            result2 = Bitmap.createBitmap(result2, result2.getWidth() / 2 - RMin-5, result2.getHeight() / 2 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
+            result2 = Bitmap.createBitmap(result2, result2.getWidth() / 2 - RMin - 5, result2.getHeight() / 2 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
             showPic();
             System.out.println("图像显示完毕");
 
@@ -404,6 +456,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 提取出犹豫形变后，保证是正方形的图片
+     *
+     * @param result
+     * @param L
+     * @return
+     */
     private boolean hasNoNullPixel(Bitmap result, int L) {
         if (L > result.getWidth() / 2 ||
                 L > result.getHeight() / 2) {
