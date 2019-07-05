@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 
 import org.opencv.android.Utils;
 import org.opencv.calib3d.Calib3d;
-import org.opencv.calib3d.StereoSGBM;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDMatch;
@@ -234,12 +233,12 @@ public class PicUtils {
 
             result1 = Bitmap.createBitmap(dst1.width(), dst1.height(), Bitmap.Config.ARGB_8888);
             result2 = Bitmap.createBitmap(dst1.width(), dst2.height(), Bitmap.Config.ARGB_8888);
-            StereoSGBM stereoSGBM = new StereoSGBM(-16, 64, 5);
-            Mat disp = new Mat();
-            Mat disp8 = new Mat();
-            stereoSGBM.set_preFilterCap(31);
-            stereoSGBM.compute(dst1, dst2, disp);
-            disp.convertTo(disp8, CvType.CV_8U, 255 / (64 * 16.0));
+//            StereoSGBM stereoSGBM = new StereoSGBM(-16, 64, 5);
+//            Mat disp = new Mat();
+//            Mat disp8 = new Mat();
+//            stereoSGBM.set_preFilterCap(31);
+//            stereoSGBM.compute(dst1, dst2, disp);
+//            disp.convertTo(disp8, CvType.CV_8U, 255 / (64 * 16.0));
             Utils.matToBitmap(dst1, result1);
             int R1 = 1;
             while (hasNoNullPixel(result1, R1)) {

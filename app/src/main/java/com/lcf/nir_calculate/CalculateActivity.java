@@ -177,7 +177,7 @@ public class CalculateActivity extends AppCompatActivity {
 //                }
             }
 
-//            膨胀处理
+//            opencv膨胀处理(步骤繁琐，不会膨胀的同时，)
 //            {
 //                float[] ndviClone = new float[minW * minH];
 //                for (int i = 0; i < ndviClone.length; i++) {
@@ -205,22 +205,20 @@ public class CalculateActivity extends AppCompatActivity {
 //                }
 //            }
 
+            /**
+             * 膨胀卷积算子（九宫格八邻域形态）(或者更多的邻域)
+             */
             int[][] core = {
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1},
-                    {1, 1, 1, 1, 1, 1, 1}
-
+                    {1, 1, 1},
+                    {1, 1, 1},
+                    {1, 1, 1},
             };
             MyDilate(ndvi, minW, minH, core);
 
 
             merge2Color(pixel1, ndvi, Color.rgb(239, 200, 143), Color.parseColor("#2abb46"));
 //            merge2Color(pixel1, ndvi, Color.BLACK, Color.parseColor("#2abb46"));
-            System.out.println("结束算");
+            System.out.println("结束膨胀处理");
             Bitmap bitmap = Bitmap.createBitmap(minW, minH, Bitmap.Config.ARGB_8888);
             bitmap.setPixels(pixel1, 0, minW, 0, 0, minW, minH);
 
@@ -261,67 +259,61 @@ public class CalculateActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * |●|◯|◯|    |◯|●|◯|   |◯|◯|●|   |◯|◯|◯|  |◯|◯|◯|
+     * |◯|⦿|◯|    |◯|⦿|◯|   |◯|⦿|◯|   |●|⦿|◯|   |◯|⦿|◯|
+     * |◯|◯|◯|   |◯|◯|◯|  |◯|◯|◯|  |◯|◯|◯|  |◯|●|◯|.
+     * 不仅仅以上几种的，中心像素，如果周围八邻域空间有符合要求的像素，就把中心像素取值为符合像素的最大值。
+     * （为什么不用opencv膨胀，因为opencv需要先生成符合像素的初图，然后进行膨胀，然后根据膨胀以后的图，来算覆盖度，而且不会自定义膨胀的需求）
+     *
+     * @param ndvi ndvn数组
+     * @param minW 图片长度
+     * @param minH 图片宽度
+     * @param core 膨胀卷积算子
+     */
     private void MyDilate(float[] ndvi, int minW, int minH, int[][] core) {
+        int pompSizo = 0;
         float[] ndviCopy = ndvi.clone();
+        //以膨胀算子中心和图片每一个像素来重合，依次往右，往下平移，算中心附近的8个像素点的值
         for (int i = core.length / 2; i < minH - 1; i++) {
             for (int j = core.length / 2; j < minW - 1; j++) {
-                float max = 0;
+                float max = Float.MIN_VALUE;
                 int startY = i - core.length / 2;
                 int startX = j - core.length / 2;
-                if ((startY >= 0 && startY < minH) &&
-                        (startX >= 0 && startX < minW)) {
+                //筛选出超出图片边界的像素
+                if ((startY >= 0 && (startY + core.length) < minH) &&
+                        (startX >= 0 && (startX + core[0].length) < minW)) {
+                    //遍历邻域
                     for (int i1 = 0; i1 < core.length; i1++) {
                         for (int i2 = 0; i2 < core[0].length; i2++) {
-                            float value = ndvi[(startY + i1) * minW + (startX + i2)];
-                            if (value > 0.05) {
-                                if (max == 0 || value > max) {
+                            float value = 0;
+                            try {
+                                value = ndvi[(startY + i1) * minW + (startX + i2)];
+                            } catch (Exception e) {
+                                e.printStackTrace();
+
+                            }
+                            //邻域NDVI大于0.05才算有效邻域值
+                            if (value > 0.12) {
+                                if (max == Float.MIN_VALUE || value < max) {
                                     max = value;
                                 }
                             }
                         }
                     }
-                    if (max != 0) {
-//                    if (ndvi[i * minW + j] < max) {
-                        ndviCopy[i * minW + j] = max;
-//                    }
+                    //只膨胀NDVN小于0.1的部分
+                    if (max != Float.MIN_VALUE) {
+                        if (ndvi[i * minW + j] < max ||
+                                ndvi[i * minW + j] < 0.12) {
+                            pompSizo++;
+                            ndviCopy[i * minW + j] = max;
+                        }
                     }
                 }
             }
         }
-        System.arraycopy(ndvi, 0, ndvi, 0, ndviCopy.length);
-//        for (int i = 0; i < ndvi.length; i += 2) {
-//            int row = i / minW;
-//            int col = i % minW;
-//            float max = 0;
-//            for (int i1 = 0; i1 < core.length; i1++) {
-//                for (int i2 = 0; i2 < core[0].length; i2++) {
-//                    int y = row - core.length / 2 + i1;
-//                    int x = col - core[0].length / 2 + i2;
-//                    if ((x >= 0 && x < minW) &&
-//                            (y >= 0 && y < minH)) {
-//                        if (core[i1][i2] != 0) {
-////                            try {
-//                            float value = ndvi[y * minW + x];
-//                            if (value >= 0.05) {
-//                                if (max == 0 || value > max) {
-//                                    max = value;
-//                                }
-//                            }
-////                            } catch (Exception e) {
-////                                System.out.println("y=" + y);
-////                                e.printStackTrace();
-////                            }
-//                        }
-//                    }
-//
-//                }
-//            }
-//            if (max != 0) {
-//                if (ndvi[i] < max) {
-//                    ndvi[i] = max;
-//                }
-//            }
-//        }
+        System.out.println("膨胀的像素个数为：" + pompSizo);
+        System.arraycopy(ndviCopy, 0, ndvi, 0, ndviCopy.length);
     }
 
 
