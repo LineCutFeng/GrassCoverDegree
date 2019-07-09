@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -40,6 +41,8 @@ public class CalculateActivity extends AppCompatActivity {
 //    //    String picPath2 = Environment.getExternalStorageDirectory().getAbsolutePath() + "/band4.png";
 //    String picPath2 = "file:///android_asset/" + dirTempPath + "/sample_out.jpg";
 
+    int offset = 0;
+
     Bitmap result1 = null;
     Bitmap result2 = null;
 
@@ -50,6 +53,9 @@ public class CalculateActivity extends AppCompatActivity {
     private ImageView iv3;
     private TextView tvDegree;
     private ProgressBar progress;
+    private Button bt_left;
+    private Button bt_right;
+    private TextView tv_offset;
 
     boolean showNotReverse = true;
 
@@ -77,6 +83,9 @@ public class CalculateActivity extends AppCompatActivity {
         iv3 = findViewById(R.id.iv3);
         tvDegree = findViewById(R.id.tv_degree);
         progress = findViewById(R.id.pb_degree);
+        bt_left = findViewById(R.id.bt_left);
+        bt_right = findViewById(R.id.bt_right);
+        tv_offset = findViewById(R.id.tv_offset);
         myHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -114,6 +123,31 @@ public class CalculateActivity extends AppCompatActivity {
                 showPicByBoolean();
             }
         });
+        bt_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (offset - 1 < -20) {
+                    return;
+                } else {
+                    offset--;
+                    tv_offset.setText(offset+"");
+                    loadImg();
+                }
+            }
+        });
+        bt_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (offset + 1 > 20) {
+                    return;
+                } else {
+                    offset++;
+                    tv_offset.setText(offset+"");
+                    loadImg();
+                }
+
+            }
+        });
         staticLoadCVLibraries();
     }
 
@@ -130,15 +164,20 @@ public class CalculateActivity extends AppCompatActivity {
             result1 = BitmapFactory.decodeStream(getAssets().open(dirTempPath + "/sample_in.jpg"));
             result2 = BitmapFactory.decodeStream(getAssets().open(dirTempPath + "/sample_out.jpg"));
             showPicByBoolean();
-            List<Bitmap> bitmaps = PicUtils.calibrateDualCamera(this, result1, result2);
-            if (bitmaps != null && bitmaps.size() == 2) {
-                result1 = bitmaps.get(0);
-                result2 = bitmaps.get(1);
-                showPicByBoolean();
-                startCalculate();
-            }
+            startCalibratePic(offset);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void startCalibratePic(int offset) {
+        List<Bitmap> bitmaps = PicUtils.calibrateDualCamera(this, result1, result2, offset);
+        if (bitmaps != null && bitmaps.size() == 2) {
+            result1 = bitmaps.get(0);
+            result2 = bitmaps.get(1);
+            showPicByBoolean();
+            startCalculate();
+            showPicByBoolean();
         }
     }
 
@@ -252,7 +291,6 @@ public class CalculateActivity extends AppCompatActivity {
             int percent = (int) (greenCount * 100.0 / (minH * minW));
             progress.setProgress(percent);
             tvDegree.setText("覆盖度：" + percent + "%");
-            showPicByBoolean();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -35,9 +35,10 @@ public class PicUtils {
      * @param context
      * @param result1
      * @param result2
+     * @param offset
      * @return
      */
-    public static List<Bitmap> calibrateDualCamera(Context context, Bitmap result1, Bitmap result2) {
+    public static List<Bitmap> calibrateDualCamera(Context context, Bitmap result1, Bitmap result2, int offset) {
         System.out.println("开始提取");
         List<Mat> objectPoints = new ArrayList<>();//角点的实际物理坐标
         List<Mat> objectPoints1 = new ArrayList<>();//角点的实际物理坐标
@@ -254,9 +255,7 @@ public class PicUtils {
             R2--;
             System.out.println(R2);
             int RMin = Math.min(R1, R2);
-            int xOffset = 15;
-            int yOffset = 3;
-            result1 = Bitmap.createBitmap(result1, result1.getWidth() / 2 - 19 - RMin, result1.getHeight() / 2 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
+            result1 = Bitmap.createBitmap(result1, result1.getWidth() / 2 - 19 + offset - RMin, result1.getHeight() / 2 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
             result2 = Bitmap.createBitmap(result2, result2.getWidth() / 2 - RMin, result2.getHeight() / 2 + 1 - RMin, 2 * RMin + 1, 2 * RMin + 1, null, false);
             ArrayList<Bitmap> bitmaps = new ArrayList<>();
             bitmaps.add(result1);
