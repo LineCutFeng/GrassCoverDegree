@@ -2,6 +2,7 @@ package com.lcf.nir_calculate;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,7 +25,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.lcf.nir_calculate.utils.CommonUtil;
 import com.lcf.nir_calculate.utils.PicUtils;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.entity.LocalMedia;
 
 import org.opencv.android.OpenCVLoader;
 
@@ -46,6 +50,8 @@ public class CalculateActivity extends AppCompatActivity {
     Bitmap result1 = null;
     Bitmap result2 = null;
 
+    public static final int CHOOSE_REQUEST = 100;
+
     boolean hasPermission = false;
     private ImageView iv0;
     private ImageView iv1;
@@ -55,6 +61,7 @@ public class CalculateActivity extends AppCompatActivity {
     private ProgressBar progress;
     private Button bt_left;
     private Button bt_right;
+    private Button bt_select;
     private TextView tv_offset;
 
     boolean showNotReverse = true;
@@ -86,6 +93,7 @@ public class CalculateActivity extends AppCompatActivity {
         bt_left = findViewById(R.id.bt_left);
         bt_right = findViewById(R.id.bt_right);
         tv_offset = findViewById(R.id.tv_offset);
+        bt_select = findViewById(R.id.bt_select);
         myHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -130,7 +138,7 @@ public class CalculateActivity extends AppCompatActivity {
                     return;
                 } else {
                     offset--;
-                    tv_offset.setText(offset+"");
+                    tv_offset.setText(offset + "");
                     loadImg();
                 }
             }
@@ -142,10 +150,16 @@ public class CalculateActivity extends AppCompatActivity {
                     return;
                 } else {
                     offset++;
-                    tv_offset.setText(offset+"");
+                    tv_offset.setText(offset + "");
                     loadImg();
                 }
 
+            }
+        });
+        bt_select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommonUtil.choosePhoto(CalculateActivity.this, CHOOSE_REQUEST);
             }
         });
         staticLoadCVLibraries();
@@ -161,8 +175,17 @@ public class CalculateActivity extends AppCompatActivity {
 
     private void loadImg() {
         try {
-            result1 = BitmapFactory.decodeStream(getAssets().open(dirTempPath + "/sample_in.jpg"));
-            result2 = BitmapFactory.decodeStream(getAssets().open(dirTempPath + "/sample_out.jpg"));
+            if (dirTempPath.contains("android_asset")) {
+                result1 = BitmapFactory.decodeStream(getAssets().open(dirTempPath.replace("file:///android_asset/", "") + "/sample_in.jpg"));
+                result2 = BitmapFactory.decodeStream(getAssets().open(dirTempPath.replace("file:///android_asset/", "") + "/sample_out.jpg"));
+            } else {
+                Bitmap bitmap = BitmapFactory.decodeFile(dirTempPath);
+                if (bitmap != null && bitmap.getWidth() == 1280 &&
+                        bitmap.getHeight() == 480) {
+                    result1 = Bitmap.createBitmap(bitmap, 0, 0, 640, 480);
+                    result2 = Bitmap.createBitmap(bitmap, 640, 0, 640, 480);
+                }
+            }
             showPicByBoolean();
             startCalibratePic(offset);
         } catch (Exception e) {
@@ -383,7 +406,7 @@ public class CalculateActivity extends AppCompatActivity {
     private void showPicByBoolean() {
         Glide.with(this)
                 .applyDefaultRequestOptions(new RequestOptions().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE))
-                .load("file:///android_asset/" + dirTempPath + "/sample_origin.jpg")
+                .load(dirTempPath + "/sample_origin.jpg")
                 .into(iv0);
         Glide.with(this)
                 .applyDefaultRequestOptions(new RequestOptions().centerCrop().diskCacheStrategy(DiskCacheStrategy.NONE))
@@ -408,6 +431,44 @@ public class CalculateActivity extends AppCompatActivity {
                     hasPermission = false;
                 }
             }
+        }
+    }
+
+    /**
+     * 接收图片选择器返回的结果
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case CHOOSE_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    if (requestCode == CHOOSE_REQUEST) {
+                        List<LocalMedia> selectList = PictureSelector.obtainMultipleResult(data);
+                        String path = "";
+                        if (selectList != null && selectList.size() > 0) {
+                            LocalMedia localMedia = selectList.get(0);
+                            if (localMedia.isCompressed()) {
+                                path = localMedia.getCompressPath();
+                            } else if (localMedia.isCut()) {
+                                path = localMedia.getCutPath();
+                            } else {
+                                path = localMedia.getPath();
+                            }
+                        }
+                        if (TextUtils.isEmpty(path)) {
+                            Toast.makeText(this, "请选择有效文件！", Toast.LENGTH_SHORT).show();
+                            return;
+                        } else {
+                            dirTempPath = path;
+                            loadImg();
+                        }
+                    }
+                }
         }
     }
 

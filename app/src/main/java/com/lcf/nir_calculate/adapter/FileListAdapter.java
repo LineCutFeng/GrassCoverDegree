@@ -11,9 +11,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.lcf.nir_calculate.CalculateActivity;
 import com.lcf.nir_calculate.R;
 
+import java.io.File;
 import java.util.List;
 
 public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.MyViewHolder> {
@@ -36,16 +38,16 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.MyView
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         Glide
                 .with(context)
+                .applyDefaultRequestOptions(RequestOptions.centerCropTransform())
                 .load("file:///android_asset/" + nameList.get(position) + "/sample_origin.jpg")
                 .transition(new DrawableTransitionOptions().crossFade())
-                .centerCrop()
                 .into(holder.ivImg);
         holder.tvFileName.setText(nameList.get(position));
         holder.ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, CalculateActivity.class);
-                intent.putExtra("path", nameList.get(position));
+                intent.putExtra("path", "file:///android_asset" + File.separator + nameList.get(position));
                 context.startActivity(intent);
             }
         });

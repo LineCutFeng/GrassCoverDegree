@@ -1,1 +1,1 @@
-include ':app', ':calidualcamera',':openCVLibrary320', ':openCVLibrary410', ':openCVLibrary240', ':picmodule'
+include ':app', ':calidualcamera', ':openCVLibrary240', ':picmodule'

@@ -7,12 +7,13 @@
     tools:context=".CalculateActivity">
 
     <Button
+        android:id="@+id/bt_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
         android:text="请选择图片"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 
     <ScrollView
